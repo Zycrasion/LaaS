@@ -10,7 +10,7 @@ app.get("/llama", async (req,res) => {
     
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
 
-    res.sendFile(path.join(process.cwd(),"llama",filename));
+    res.redirect("https://raw.githubusercontent.com/Zycrasion/LaaS/main/".concat(filename));
 });
 
 app.get("/", (req,res) => {
