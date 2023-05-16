@@ -5,7 +5,7 @@ const fs = require("fs/promises")
 const path = require("path");
 
 app.get("/llama", async (req,res) => {
-    let index = await fs.readFile("llama/index", {encoding:"utf-8"});
+    let index = await fs.readFile(path.join(process.cwd(), "llama/index"), {encoding:"utf-8"});
     index = index.split("\n");
     
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
