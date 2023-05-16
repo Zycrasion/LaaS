@@ -10,7 +10,7 @@ app.get("/llama", async (req,res) => {
     
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
 
-    res.sendFile(path.resolve(filename));
+    res.sendFile(path.join(process.cwd(),filename));
 });
 
 app.get("/", (req,res) => {
