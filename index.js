@@ -11,6 +11,10 @@ app.get("/llama", async (req,res) => {
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
 
     res.sendFile(path.resolve(filename));
+});
+
+app.get("/", (req,res) => {
+    res.redirect("/llama")
 })
 
 app.listen(5000, ()=>{console.log("READY")});
