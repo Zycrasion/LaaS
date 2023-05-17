@@ -7,7 +7,6 @@ all code is in `index.js`
 
 # Setup
 1. Install dependencies
-
 `npm i`
 
 2. Run the service
