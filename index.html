@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llama</title>
+    <script>
+        function httpReq(url)
+        {
+            return new Promise(resolve => {
+                let req = new XMLHttpRequest();
+                req.open("GET", url);
+                req.onreadystatechange = () =>
+                {
+                    if (req.responseText == "") return;
+                    resolve(req.responseText)
+                }
+                req.send();
+            })
+        }
+
+        window.onload = async () => {
+            let ele = document.getElementById("fact");
+            ele.innerText = await httpReq("/llama_fax");
+
+            let body = document.getElementsByTagName("body")[0];
+            body.style = `background-image: url(${await httpReq("/llama_url")})`
+        }
+    </script>
+    <style>
+        html, body
+        {
+            width: 100vw;
+            height: 100vh;
+            padding:0;
+            margin:0;
+            color: white;
+        }
+
+        iframe
+        {
+            border:none;
+            background-color: rgba(255,255,255,0);
+            color:white;
+            margin:0;
+            text-align: center;
+            align-self: center;
+        }
+        
+        div
+        {
+            border: solid white 2px;
+            border-radius: 10%;
+            background-color: black;
+            margin:0;
+            padding:1%;
+            text-align: center;
+            align-self: center;
+            position: absolute;
+            top:25%;
+            left:37.5%;
+            width: 25%;
+            height: 50%;
+        }
+        
+        button
+        {
+            border: white solid 1px;
+            background-color: black;
+            color:white;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        API Overview:
+        <ul>
+            <li>/llama for llama photos</li>
+            <li>/llama_url for image urls</li>
+            <li>/llama_fax for llama facts</li>
+        </ul>
+        <span id="fact"></span><br>
+        <button onclick="window.onload()">New Image and Fact</button>
+    </div>
+</body>
+</html>

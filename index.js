@@ -4,9 +4,17 @@ const app = express();
 const fs = require("fs/promises")
 const path = require("path");
 
+async function retrieveIndex()
+{
+    let contents = await fs.readFile(path.join(process.cwd(), "llama_picture_index"), {encoding:"utf-8"});
+    contents = contents.split("\n").filter(v=>{
+        return v != ""
+    });
+    return contents;
+}
+
 app.get("/llama", async (req,res) => {
-    let index = await fs.readFile(path.join(process.cwd(), "llama/index"), {encoding:"utf-8"});
-    index = index.split("\n");
+    let index = await retrieveIndex();
     
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
 
@@ -14,8 +22,7 @@ app.get("/llama", async (req,res) => {
 });
 
 app.get("/llama_url", async (req,res) => {
-    let index = await fs.readFile(path.join(process.cwd(), "llama/index"), {encoding:"utf-8"});
-    index = index.split("\n");
+    let index = await retrieveIndex();
     
     let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
     let pathToFile = "https://raw.githubusercontent.com/Zycrasion/LaaS/main/".concat(filename);
@@ -33,7 +40,7 @@ app.get("/llama_fax", async (req,res) => {
 })
 
 app.get("/", (req,res) => {
-    res.send("/llama for llamas\n/llama_url for picture url\n/llama_fax for random llama fax")
+    res.sendFile(path.join(process.cwd(), "index.html"))
 })
 
 app.listen(5000, ()=>{console.log("READY")});
