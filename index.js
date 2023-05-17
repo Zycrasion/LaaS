@@ -13,30 +13,44 @@ async function retrieveIndex()
     return contents;
 }
 
-app.get("/llama", async (req,res) => {
-    let index = await retrieveIndex();
-    
-    let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
+function RandomRange(mi, ma)
+{
+    ma = ma -1;
+    let diff = ma - mi;
+    return Math.floor(mi + (Math.random() * diff));
+}
 
-    res.redirect("https://raw.githubusercontent.com/Zycrasion/LaaS/main/".concat(filename));
-});
+function RandomElement(li)
+{
+    return li[RandomRange(0, li.length)]
+}
 
-app.get("/llama_url", async (req,res) => {
-    let index = await retrieveIndex();
-    
-    let filename = "llama/".concat(index[Math.floor(Math.random() * index.length)]);
-    let pathToFile = "https://raw.githubusercontent.com/Zycrasion/LaaS/main/".concat(filename);
-
-    res.send(pathToFile)
-})
-
-app.get("/llama_fax", async (req,res) => {
+async function getFact()
+{
     let facts = await fs.readFile(path.join(process.cwd(), "llama_fax"), {encoding:"utf-8"});
     facts = facts.split("\n");
 
-    let fact = facts[Math.floor(Math.random() * facts.length)];
+    let fact = RandomElement(facts);
+    return fact;
+}
 
-    res.send(fact)
+async function getPicFilename()
+{
+    let index = await retrieveIndex();
+    let filename = RandomElement(index);
+    return filename;
+}
+
+app.get("/llama", async (req,res) => {
+    res.redirect("https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(await getPicFilename()));
+});
+
+app.get("/llama_url", async (req,res) => {
+    res.send("https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(await getPicFilename()))
+})
+
+app.get("/llama_fax", async (req,res) => {
+    res.send(await getFact())
 })
 
 app.get("/", (req,res) => {
