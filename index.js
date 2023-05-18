@@ -25,10 +25,14 @@ function RandomElement(li)
     return li[RandomRange(0, li.length)]
 }
 
+async function getFacts()
+{
+    return (await fs.readFile(path.join(process.cwd(), "llama_fax"), {encoding:"utf-8"})).split("\n");
+}
+
 async function getFact()
 {
-    let facts = await fs.readFile(path.join(process.cwd(), "llama_fax"), {encoding:"utf-8"});
-    facts = facts.split("\n");
+    let facts = await getFacts();
 
     let fact = RandomElement(facts);
     return fact;
@@ -41,12 +45,67 @@ async function getPicFilename()
     return filename;
 }
 
+function makeURL(a)
+{
+    return "https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(a);
+}
+
+async function getRandomImageURL()
+{
+    return makeURL(await getPicFilename());
+}
+
+app.get("/smart_llama/*", async function(req, res)
+{
+    let split = req.url.split("/");
+    split.shift();
+    res.type("application/json");
+
+    let response = {
+        errors : [],
+    };
+
+    if (split.length > 1)
+    {
+        let index = await retrieveIndex();
+        let facts = await getFacts();
+        for (let i = 1; i < split.length; i++)
+        {
+            let command = split[i];
+            switch(command)
+            {
+                case "image_count":
+                    response["image_count"] = index.length;
+                    break;
+                
+                case "image_by_id":
+                    response["image_url"] = makeURL(index[Math.floor(Number(split[++i]))]);
+                    break;
+                
+                case "fact_count":
+                    response["fact_count"] = facts.length;
+                    break;
+
+                case "fact_by_id":
+                    response["fact"] = facts[Math.floor(Number(split[++i]))];
+                    break;
+
+                default:
+                    response["errors"].push(command);
+                    break;
+            }
+        }
+    }
+    
+    res.send(JSON.stringify(response))
+})
+
 app.get("/llama", async (req,res) => {
-    res.redirect("https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(await getPicFilename()));
+    res.redirect(await getRandomImageURL());
 });
 
 app.get("/llama_url", async (req,res) => {
-    res.send("https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(await getPicFilename()))
+    res.send(await getRandomImageURL())
 })
 
 app.get("/llama_fax", async (req,res) => {
