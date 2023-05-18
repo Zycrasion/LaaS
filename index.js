@@ -101,18 +101,6 @@ app.get("/smart_llama/*", async function(req, res)
     res.send(JSON.stringify(response))
 })
 
-app.get("/llama_fact_and_image", async (req,res) => {
-    if (res.hostname == "localhost")
-    {
-        res.end("ERROR: PATHWAY CAN'T BE RUN ON VERCEL, YOU NEED TO RUN IT LOCALLY!")
-        return;
-    }
-    const buffer = await require("./image_handler")(`${req.protocol}://${req.hostname}:${port}`);
-    res.contentType('png');
-    res.write(buffer);
-    res.end();
-})
-
 app.get("/llama", async (req,res) => {
     if (req.hostname == "localhost")
     {
