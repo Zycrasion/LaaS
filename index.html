@@ -26,6 +26,10 @@
 
             let body = document.getElementsByTagName("body")[0];
             body.style = `background-image: url(${await httpReq("/llama_url")})`
+
+            let counts = document.getElementById("counts");
+            let response = JSON.parse(await httpReq("/smart_llama/image_count/fact_count"));
+            counts.innerText = `Image Count: ${response.image_count} Fact Count: ${response.fact_count}`;
         }
     </script>
     <style>
@@ -99,9 +103,10 @@
                 for image count
                 all pathways are listed here, /image_by_id/# /fact_count /fact_by_id/# /image_count
             </li>
-        </ul>
+        </ul><br>
         <span id="fact"></span><br>
         <button onclick="window.onload()">New Image and Fact</button><br>
+        <span id="counts"></span><br>
         <a href="https://github.com/Zycrasion/LaaS">View Source Code</a>
     </div>
 </body>
