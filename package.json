@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "canvas": "^2.11.2",
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.11",
+    "word-wrap": "^1.2.3"
   }
 }

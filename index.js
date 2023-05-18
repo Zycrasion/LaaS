@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const fs = require("fs/promises")
 const path = require("path");
+const port = 80;
 
 async function retrieveIndex()
 {
@@ -50,7 +51,7 @@ function makeURL(a)
     return "https://raw.githubusercontent.com/Zycrasion/LaaS/main/llama/".concat(a);
 }
 
-async function getRandomImageURL()
+async function getRandomImageURL(req)
 {
     return makeURL(await getPicFilename());
 }
@@ -100,7 +101,20 @@ app.get("/smart_llama/*", async function(req, res)
     res.send(JSON.stringify(response))
 })
 
+app.get("/llama_fact_and_image", async (req,res) => {
+    const buffer = await require("./image_handler")(`${req.protocol}://${req.hostname}:${port}`);
+    res.contentType('png');
+    res.write(buffer);
+    res.end();
+})
+
 app.get("/llama", async (req,res) => {
+    if (req.hostname == "localhost")
+    {
+        res.write(await fs.readFile(process.cwd() + "/llama/" + await getPicFilename()))
+        res.end();
+        return;
+    }
     res.redirect(await getRandomImageURL());
 });
 
@@ -116,6 +130,6 @@ app.get("/", (req,res) => {
     res.sendFile(path.join(process.cwd(), "index.html"))
 })
 
-app.listen(5000, ()=>{console.log("READY")});
+app.listen(port, ()=>{console.log("READY")});
 
 module.exports = app;
